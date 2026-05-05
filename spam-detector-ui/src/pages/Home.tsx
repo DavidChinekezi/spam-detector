@@ -18,8 +18,7 @@ const SpamDetector = () => {
   // Replace with your actual backend URL (local or production)
   // For local development: "http://127.0.0.1:5000/predict"
   // For production: use your Render or Vercel URL
-  const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:5000/predict";
-
+  const API_URL = "https://spam-detector-1-qlhz.onrender.com/predict";
   const handleAnalyse = async () => {
     if (!message.trim()) {
       setError("Please enter an email message to analyse.");
@@ -37,7 +36,7 @@ const SpamDetector = () => {
       });
       if (!response.ok) throw new Error(`Server error: ${response.status}`);
       const data = await response.json();
-      
+
       // Map backend fields (snake_case) to our frontend interface (camelCase)
       setResult({
         isSpam: data.is_spam,
