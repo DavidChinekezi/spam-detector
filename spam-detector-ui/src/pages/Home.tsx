@@ -1,14 +1,24 @@
 import { useState } from "react";
 import "../styles/home.css"; // import the separate CSS file
 
-const SpamDetector = () => {
-  const [message, setMessage] = useState("");
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+// Define the shape of the API response and our result state
+interface SpamResult {
+  isSpam: boolean;
+  score: number;
+  keywords: string[];
+  message: string;
+}
 
-  // Replace with your actual backend URL
-  const API_URL = "https://your-backend.vercel.app/predict";
+const SpamDetector = () => {
+  const [message, setMessage] = useState<string>("");
+  const [result, setResult] = useState<SpamResult | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+  // Replace with your actual backend URL (local or production)
+  // For local development: "http://127.0.0.1:5000/predict"
+  // For production: use your Render or Vercel URL
+  const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:5000/predict";
 
   const handleAnalyse = async () => {
     if (!message.trim()) {
@@ -27,6 +37,8 @@ const SpamDetector = () => {
       });
       if (!response.ok) throw new Error(`Server error: ${response.status}`);
       const data = await response.json();
+      
+      // Map backend fields (snake_case) to our frontend interface (camelCase)
       setResult({
         isSpam: data.is_spam,
         score: data.spam_score,
@@ -73,7 +85,7 @@ const SpamDetector = () => {
             <div className="result-message">{result.message}</div>
             <div className="result-details">
               <span>📊 Spam score: {result.score}</span>
-              {result.keywords?.length > 0 && (
+              {result.keywords.length > 0 && (
                 <span>🔍 Keywords: {result.keywords.join(", ")}</span>
               )}
             </div>
